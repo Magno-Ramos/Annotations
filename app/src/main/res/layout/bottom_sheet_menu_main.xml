@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:gravity="bottom"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/btFolder"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:drawableStart="@drawable/ic_folder_outline"
+        android:drawablePadding="16dp"
+        android:focusable="true"
+        android:gravity="start|center"
+        android:padding="16dp"
+        android:text="Nova Pasta"
+        android:textColor="#3F51B5" />
+
+    <TextView
+        android:id="@+id/btFile"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:drawableStart="@drawable/ic_file_text"
+        android:drawablePadding="16dp"
+        android:focusable="true"
+        android:gravity="start|center"
+        android:padding="16dp"
+        android:text=""
+        android:textColor="@color/green_color" />
+
+
+</LinearLayout>

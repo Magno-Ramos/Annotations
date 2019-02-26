@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="item_note_width">200dp</dimen>
+    <dimen name="input_layout_password_height">54dp</dimen>
+    <dimen name="fab_folder_margin">80dp</dimen>
+    <dimen name="fab_default_margin">16dp</dimen>
+</resources>

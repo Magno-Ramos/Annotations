@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Anotacões</string>
+    <string name="empty_annotations_message">Nenhuma anotação até o momento</string>
+    <string name="hint_name_of_folder">Nome da Pasta</string>
+    <string name="cancel">Cancelar</string>
+    <string name="confirm">Confirmar</string>
+    <string name="question_delete_note">Deseja excluir essa Anotação ?</string>
+    <string name="question_delete_folder">Deseja excluir esta Pasta ?</string>
+    <string name="delete">Excluir</string>
+    <string name="title">Titulo</string>
+    <string name="message">Mensagem</string>
+    <string name="save">Salvar</string>
+    <string name="message_input_password_not_empty">O campo senha não pode ser vazio</string>
+    <string name="hint_title_of_note">Titulo para anotação</string>
+    <string name="hint_title_of_folder">Titulo da pasta</string>
+    <string name="new_note">Nova Anotação</string>
+    <string name="hint_fill">Minha Anotação</string>
+    <string name="items_preview_list">List View</string>
+    <string name="items_preview_grid">Grid View</string>
+    <string name="settings">Configurações</string>
+    <string name="edit">Editar</string>
+    <string name="empty_text" />
+    <string name="new_folder">Nova Pasta</string>
+    <string name="rename_folder">Renomear Pasta</string>
+    <string name="password">Senha</string>
+    <string name="notes">Anotações</string>
+    <string name="folders">Pastas</string>
+    <string name="rename">Renomear</string>
+    <string name="lock">Bloquear</string>
+    <string name="unlock">Desbloquear</string>
+    <string name="invalid_password">Senha inválida</string>
+    <string name="question_delete_folder_with_notes">Está ação irá apagar todas as anotações dentro da pasta. Deseja continuar ?</string>
+    <string name="enter_a_password">Digite uma senha</string>
+    <string name="folder_blocked_successfully">Pasta bloqueada com sucesso</string>
+    <string name="folder_is_already_locked">Pasta já bloqueada</string>
+    <string name="folder_successfully_unlocked">Pasta desbloqueada com sucesso</string>
+    <string name="ads_banner_id_test">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="admob_id">ca-app-pub-7769225974793786~7468493962</string>
+    <string name="ads_banner_id">ca-app-pub-7769225974793786/8582975523</string>
+    <string name="yes">Sim</string>
+    <string name="not">Não</string>
+    <string name="question_save_changes">Deseja salvar as alteracões ?</string>
+    <string name="message_max_letter">Máximo possivel</string>
+</resources>
