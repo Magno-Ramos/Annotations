@@ -4,20 +4,17 @@
     <group>
 
         <item
-            android:id="@+id/item_note"
-            android:checkable="true"
-            android:enabled="true"
-            android:icon="@drawable/ic_note"
+            android:id="@+id/item_notes"
+            android:icon="@drawable/ic_file_white"
             android:title="@string/app_name" />
 
         <item
+            android:id="@+id/item_tasks"
             android:icon="@drawable/ic_assignment"
             android:title="Tarefas" />
 
         <item
-            android:id="@+id/item_theme"
-            android:checkable="true"
-            android:enabled="true"
+            android:id="@+id/item_themes"
             android:icon="@drawable/ic_palette"
             android:title="Temas" />
 
