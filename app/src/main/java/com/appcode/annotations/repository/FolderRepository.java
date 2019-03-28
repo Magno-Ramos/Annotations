@@ -22,6 +22,10 @@ public class FolderRepository {
         allFolders = folderDao.findAll();
     }
 
+    public LiveData<List<Folder>> getAll() {
+        return allFolders;
+    }
+
     public void insert(Folder folder) {
         new InsertFolderTask(folderDao).execute(folder);
     }
@@ -32,10 +36,6 @@ public class FolderRepository {
 
     public void delete(Folder folder) {
         new DeleteFolderTask(folderDao).execute(folder);
-    }
-
-    public LiveData<List<Folder>> getAllFolders() {
-        return allFolders;
     }
 
     private static class InsertFolderTask extends AsyncTask<Folder, Void, Void> {

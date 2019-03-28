@@ -19,7 +19,7 @@ public class FoldersViewModel extends AndroidViewModel {
     public FoldersViewModel(@NonNull Application application) {
         super(application);
         folderRepository = new FolderRepository(application);
-        allFolders = folderRepository.getAllFolders();
+        allFolders = folderRepository.getAll();
     }
 
     public void insert(Folder folder) {

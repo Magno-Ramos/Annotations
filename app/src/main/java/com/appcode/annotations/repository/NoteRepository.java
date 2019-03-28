@@ -27,58 +27,33 @@ public class NoteRepository {
         }
     }
 
-    /**
-     * find all notes by folder
-     * @param id folder
-     * @return list of notes
-     */
+
     public LiveData<List<Note>> findAllNotesByFolderId(int id) {
         allNotes = noteDao.findAllByFolderId(id);
         return allNotes;
     }
 
-    /**
-     * insert note to database
-     * @param note to insert
-     * @param onCreateListener listener for result
-     */
+    public LiveData<List<Note>> getAll() {
+        return allNotes;
+    }
+
     public void insert(Note note, OnCreateListener<Note> onCreateListener) {
         new InsertNoteTask(noteDao, onCreateListener).execute(note);
     }
 
-    /**
-     * update note
-     * @param note to update
-     * @param updateListener listener for result
-     */
     public void update(Note note, OnUpdateListener<Note> updateListener) {
         note.setLastModification(System.currentTimeMillis());
         new UpdateNoteTask(noteDao, updateListener).execute(note);
     }
 
-    /**
-     * delete note of database
-     * @param note to delete
-     */
     public void delete(Note note) {
         new DeleteNoteTask(noteDao).execute(note);
     }
 
-    /**
-     * find notes changed recents
-     * @return list of notes
-     */
     public LiveData<List<Note>> findRecentFiles() {
         return noteDao.findRecentFilesChanged();
     }
 
-    /**
-     * find all notes in database
-     * @return list of notes
-     */
-    public LiveData<List<Note>> getAllNotes() {
-        return allNotes;
-    }
 
     public LiveData<List<Note>> findAllNotesOutsideFolder() {
         return noteDao.findAllNotesOutsideFolder();
