@@ -1,10 +1,7 @@
 package com.appcode.annotations.util;
 
-import android.annotation.SuppressLint;
-
 public class HistoryModification {
 
-    @SuppressLint("NewApi")
     public static String findHistoryByTime(long currentDate, long history) {
         int difDays = (int) ((currentDate - history) / (24 * 60 * 60 * 1000));
         if (difDays == 0) {

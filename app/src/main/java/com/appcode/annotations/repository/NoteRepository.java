@@ -4,6 +4,7 @@ import android.app.Application;
 import android.os.AsyncTask;
 
 import com.appcode.annotations.callback.OnCreateListener;
+import com.appcode.annotations.callback.OnUpdateListener;
 import com.appcode.annotations.dao.NoteDao;
 import com.appcode.annotations.database.NoteDatabase;
 import com.appcode.annotations.model.Note;
@@ -21,34 +22,66 @@ public class NoteRepository {
         NoteDatabase noteDatabase = NoteDatabase.getInstance(application);
         noteDao = noteDatabase.noteDao();
 
-        if (findAll)
+        if (findAll) {
             allNotes = noteDao.findAll();
+        }
     }
 
+    /**
+     * find all notes by folder
+     * @param id folder
+     * @return list of notes
+     */
     public LiveData<List<Note>> findAllNotesByFolderId(int id) {
         allNotes = noteDao.findAllByFolderId(id);
         return allNotes;
     }
 
+    /**
+     * insert note to database
+     * @param note to insert
+     * @param onCreateListener listener for result
+     */
     public void insert(Note note, OnCreateListener<Note> onCreateListener) {
         new InsertNoteTask(noteDao, onCreateListener).execute(note);
     }
 
-    public void update(Note note) {
+    /**
+     * update note
+     * @param note to update
+     * @param updateListener listener for result
+     */
+    public void update(Note note, OnUpdateListener<Note> updateListener) {
         note.setLastModification(System.currentTimeMillis());
-        new UpdateNoteTask(noteDao).execute(note);
+        new UpdateNoteTask(noteDao, updateListener).execute(note);
     }
 
+    /**
+     * delete note of database
+     * @param note to delete
+     */
     public void delete(Note note) {
         new DeleteNoteTask(noteDao).execute(note);
     }
 
+    /**
+     * find notes changed recents
+     * @return list of notes
+     */
     public LiveData<List<Note>> findRecentFiles() {
-        return noteDao.findRecentFilesChangeds();
+        return noteDao.findRecentFilesChanged();
     }
 
+    /**
+     * find all notes in database
+     * @return list of notes
+     */
     public LiveData<List<Note>> getAllNotes() {
         return allNotes;
+    }
+
+    public LiveData<List<Note>> findAllNotesOutsideFolder() {
+        return noteDao.findAllNotesOutsideFolder();
     }
 
     private static class InsertNoteTask extends AsyncTask<Note, Void, Void> {
@@ -74,15 +107,21 @@ public class NoteRepository {
 
     private static class UpdateNoteTask extends AsyncTask<Note, Void, Void> {
 
+        private OnUpdateListener<Note> onUpdateListener;
         private NoteDao noteDao;
 
-        private UpdateNoteTask(NoteDao noteDao) {
+        private UpdateNoteTask(NoteDao noteDao, OnUpdateListener<Note> onUpdateListener) {
             this.noteDao = noteDao;
+            this.onUpdateListener = onUpdateListener;
         }
 
         @Override
         protected Void doInBackground(Note... notes) {
             noteDao.update(notes[0]);
+            if (onUpdateListener != null){
+                Note note = noteDao.findById(notes[0].getId());
+                onUpdateListener.onUpdate(note);
+            }
             return null;
         }
     }

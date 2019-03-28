@@ -2,6 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/item_rename_note"
+        android:title="@string/rename" />
+
+    <item
         android:id="@+id/item_edit_note"
         android:title="@string/edit" />
 

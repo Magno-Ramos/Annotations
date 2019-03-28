@@ -18,7 +18,6 @@ import com.appcode.annotations.model.Note;
 import com.appcode.annotations.viewmodel.FolderViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
@@ -28,7 +27,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class IntoFolderActivity extends AppCompatActivity implements NoteAdapter.NoteListener, OnCreateListener<Note> {
+public class NotesActivity extends AppCompatActivity implements NoteAdapter.NoteListener, OnCreateListener<Note> {
 
     public static final String KEY_INTENT_FOLDER = "KEY_INTENT_FOLDER";
 
@@ -42,11 +41,10 @@ public class IntoFolderActivity extends AppCompatActivity implements NoteAdapter
     FloatingActionButton fab;
 
     private NoteAdapter noteAdapter;
-    private FolderViewModel folderViewModel;
     private InFolderController inFolderController;
 
     public static Intent buildIntent(Context context, Folder folder) {
-        Intent intent = new Intent(context, IntoFolderActivity.class);
+        Intent intent = new Intent(context, NotesActivity.class);
         intent.putExtra(KEY_INTENT_FOLDER, folder);
         return intent;
     }
@@ -54,12 +52,12 @@ public class IntoFolderActivity extends AppCompatActivity implements NoteAdapter
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_folder);
+        setContentView(R.layout.activity_notes);
         setupActionBar();
 
         ButterKnife.bind(this);
 
-        noteAdapter = new NoteAdapter(this, this);
+        noteAdapter = new NoteAdapter(this, this, R.layout.item_annotation_vert);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         recyclerView.setLayoutAnimation(AnimationUtils.loadLayoutAnimation(this, R.anim.layout_animation_fall_down));
@@ -68,9 +66,8 @@ public class IntoFolderActivity extends AppCompatActivity implements NoteAdapter
         Folder folder = getIntent().getParcelableExtra(KEY_INTENT_FOLDER);
         setTitle(folder.getTitle());
 
-        folderViewModel = ViewModelProviders.of(this).get(FolderViewModel.class);
+        FolderViewModel folderViewModel = ViewModelProviders.of(this).get(FolderViewModel.class);
         folderViewModel.findAllNotes(folder.getId()).observe(this, notes -> {
-
             noteAdapter.submitList(notes);
             textViewEmpty.setVisibility(View.GONE);
             if (notes.isEmpty()) {
@@ -108,9 +105,6 @@ public class IntoFolderActivity extends AppCompatActivity implements NoteAdapter
             case android.R.id.home:
                 onBackPressed();
                 return true;
-            /*case R.id.item_add_note:
-                inFolderController.attemptCreateNote(this);
-                return true;*/
         }
         return super.onOptionsItemSelected(item);
     }
@@ -122,35 +116,24 @@ public class IntoFolderActivity extends AppCompatActivity implements NoteAdapter
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if ((resultCode == EditNoteActivity.RESULT_UPDATE || resultCode == EditNoteActivity.RESULT_DELETE) && data != null) {
-            Note note = data.getParcelableExtra(EditNoteActivity.NOTE_INTENT_KEY);
-            if (note != null) {
-
-                switch (resultCode) {
-                    case EditNoteActivity.RESULT_UPDATE:
-                        folderViewModel.updateNote(note);
-                        break;
-                    case EditNoteActivity.RESULT_DELETE:
-                        folderViewModel.deleteNote(note);
-                        break;
-                }
-            }
-        }
-    }
-
-    @Override
     public void onClickNote(Note note, View view) {
         startActivityForResult(EditNoteActivity.buildUpdateIntent(this, note), 0);
     }
 
     @Override
-    public void onClickOption(Note note, View view) {
-        PopupMenu popupMenu = new PopupMenu(IntoFolderActivity.this, view);
+    public void onClickOption(Note note, View view, int position) {
+        PopupMenu popupMenu = new PopupMenu(NotesActivity.this, view);
         popupMenu.inflate(R.menu.menu_popup_note);
         popupMenu.setOnMenuItemClickListener(item1 -> {
             switch (item1.getItemId()) {
+                case R.id.item_rename_note:
+                    inFolderController.attemptRenameNote(note, noteUpdated -> {
+                        // check if is updated
+                        if (noteUpdated != null){
+                            runOnUiThread(() -> noteAdapter.notifyItemChanged(position));
+                        }
+                    });
+                    break;
                 case R.id.item_edit_note:
                     onClickNote(note, view);
                     break;

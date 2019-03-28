@@ -1,6 +1,5 @@
 package com.appcode.annotations;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,7 +10,10 @@ import android.widget.TextView;
 import com.appcode.annotations.adapter.FolderHorizontalAdapter;
 import com.appcode.annotations.adapter.FolderListener;
 import com.appcode.annotations.adapter.NoteAdapter;
+import com.appcode.annotations.callback.Callback;
+import com.appcode.annotations.controller.FabMenuController;
 import com.appcode.annotations.controller.FolderController;
+import com.appcode.annotations.controller.NoteController;
 import com.appcode.annotations.model.Folder;
 import com.appcode.annotations.model.Note;
 import com.appcode.annotations.viewmodel.FoldersViewModel;
@@ -22,10 +24,8 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -37,83 +37,92 @@ public class MainActivity extends AppCompatActivity {
     private TextView emptyTextView;
 
     private AdView adView;
+
     private View viewFolders;
     private View viewNotes;
-
-    private RecyclerView recyclerViewNote;
-    private RecyclerView recyclerViewFolder;
-
-    private NoteViewModel noteViewModel;
 
     private FolderHorizontalAdapter folderAdapter;
     private NoteAdapter noteAdapter;
 
     private FolderController folderController;
-    // private NoteController noteController;
-    // private FabMenuController fabMenuController;
+    private NoteController noteController;
+
+    private FabMenuController fabMenuController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // FloatingActionButton fabMenu = findViewById(R.id.fab_button_menu);
-        FloatingActionButton fabFolder = findViewById(R.id.fab_button_action_folder);
-        fabFolder.setOnClickListener(view -> folderController.attemptCreateFolder());
-        // FloatingActionButton fabNote = findViewById(R.id.fab_button_action_note);
-
-        /*int xScreen = getResources().getDisplayMetrics().widthPixels;
-        int item = getResources().getDimensionPixelSize(R.dimen.item_note_width);
-        int spanCount = (xScreen / item);*/
-
         emptyTextView = findViewById(R.id.emptyTextView);
         emptyTextView.setVisibility(View.GONE);
-
-        View viewLayerFabMenu = findViewById(R.id.view_layer_fab_menu);
-        viewLayerFabMenu.setVisibility(View.GONE);
 
         viewFolders = findViewById(R.id.viewFolders);
         viewFolders.setVisibility(View.GONE);
 
         viewNotes = findViewById(R.id.viewNotes);
-        viewNotes.setVisibility(View.GONE);
+        viewNotes.setVisibility(View.INVISIBLE);
 
-        recyclerViewFolder = findViewById(R.id.recyclerViewFolder);
+        setupFabMenu();
+        setupRecyclerViewFolders();
+        setupRecyclerViewNotes();
+        setupAds();
+
+        /*int xScreen = getResources().getDisplayMetrics().widthPixels;
+        int item = getResources().getDimensionPixelSize(R.dimen.item_note_width);
+        int spanCount = (xScreen / item);*/
+    }
+
+    private void setupFabMenu() {
+        FloatingActionButton fabFolder = findViewById(R.id.fab_button_action_folder);
+        fabFolder.setOnClickListener(view -> folderController.attemptCreateFolder());
+
+        View viewLayerFabMenu = findViewById(R.id.view_layer_fab_menu);
+
+        fabMenuController = new FabMenuController(this, viewLayerFabMenu);
+        fabMenuController.setFabFolder(fabFolder);
+        fabMenuController.setFabNote(findViewById(R.id.fab_button_action_note));
+        fabMenuController.setFabMenuToggle(findViewById(R.id.fab_button_menu));
+        fabMenuController.setFabListener(fabMenuListener());
+    }
+
+    private void setupRecyclerViewFolders() {
+        folderAdapter = new FolderHorizontalAdapter(this, folderListener);
+
+        RecyclerView recyclerViewFolder = findViewById(R.id.recyclerViewFolder);
         recyclerViewFolder.setLayoutManager(new LinearLayoutManager(this));
-
-        recyclerViewNote = findViewById(R.id.recyclerViewNote);
-        recyclerViewNote.setLayoutManager(new LinearLayoutManager(this));
-
-        noteViewModel = ViewModelProviders.of(this).get(NoteViewModel.class);
-        noteViewModel.getAllNotes().observe(this, notes -> {
-
-            if (recyclerViewFolder != null && notes != null) {
-                createAdapterFolderNote();
-                noteAdapter.submitList(notes);
-            }
-
-            emptyNotes = (notes == null || notes.isEmpty());
-            checkEmpty();
-        });
+        recyclerViewFolder.setAdapter(folderAdapter);
 
         FoldersViewModel foldersViewModel = ViewModelProviders.of(this).get(FoldersViewModel.class);
         foldersViewModel.getAllFolders().observe(this, folders -> {
-
-            if (recyclerViewNote != null && folders != null) {
-                createAdapterFolderNote();
-                folderAdapter.submitList(folders);
-            }
-
-            emptyFolders = (folders == null || folders.isEmpty());
+            folderAdapter.submitList(folders);
+            emptyFolders = folders.isEmpty();
+            viewFolders.setVisibility(emptyFolders ? View.GONE : View.VISIBLE);
             checkEmpty();
         });
 
         folderController = new FolderController(this, foldersViewModel);
-        // noteController = new NoteController(this, noteViewModel);
+    }
 
-        /*fabMenuController = new FabMenuController(this, fabMenu, fabFolder, fabNote, viewLayerFabMenu);
-        fabMenuController.setFabListener(fabMenuListener());*/
+    private void setupRecyclerViewNotes() {
+        noteAdapter = new NoteAdapter(this, noteListener, R.layout.item_note_outside_folder);
 
+        RecyclerView recyclerViewNotes = findViewById(R.id.recyclerViewNotes);
+        recyclerViewNotes.setLayoutManager(new LinearLayoutManager(this));
+        recyclerViewNotes.setAdapter(noteAdapter);
+
+        NoteViewModel noteViewModel = ViewModelProviders.of(this).get(NoteViewModel.class);
+        noteViewModel.findAllNotesOutsideFolder().observe(this, notes -> {
+            noteAdapter.submitList(notes);
+            emptyNotes = notes.isEmpty();
+            viewNotes.setVisibility(emptyNotes ? View.INVISIBLE : View.VISIBLE);
+            checkEmpty();
+        });
+
+        noteController = new NoteController(this, noteViewModel);
+    }
+
+    private void setupAds() {
         MobileAds.initialize(this, getString(R.string.admob_id));
 
         adView = findViewById(R.id.adView);
@@ -126,23 +135,9 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void createAdapterFolderNote() {
-        if (folderAdapter == null) {
-            folderAdapter = new FolderHorizontalAdapter(this, folderListener);
-            recyclerViewFolder.setAdapter(folderAdapter);
-        }
-
-        if (noteAdapter == null) {
-            noteAdapter = new NoteAdapter(this, noteListener);
-            recyclerViewNote.setAdapter(noteAdapter);
-            recyclerViewNote.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        }
-    }
-
     private void checkEmpty() {
         emptyTextView.setVisibility((emptyFolders && emptyNotes) ? View.VISIBLE : View.GONE);
-        viewFolders.setVisibility(emptyFolders ? View.GONE : View.VISIBLE);
-        viewNotes.setVisibility(emptyNotes ? View.GONE : View.VISIBLE);
+        viewFolders.setVisibility((emptyFolders && emptyNotes) ? View.GONE : View.VISIBLE);
     }
 
     /**
@@ -150,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
      *
      * @return Listener
      */
-    /*private FabMenuController.FabListener fabMenuListener() {
+    private FabMenuController.FabListener fabMenuListener() {
         return new FabMenuController.FabListener() {
             @Override
             public void onClickFabFolder(View view) {
@@ -159,10 +154,16 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onClickFabNote(View view) {
-                noteController.attemptCreateNote();
+                noteController.attemptCreateNote(new Callback<Note>() {
+                    @Override
+                    public void onSuccess(Note note) {
+                        startActivity(EditNoteActivity.buildUpdateIntent(MainActivity.this, note));
+                        overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
+                    }
+                });
             }
         };
-    }*/
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -180,35 +181,14 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * Note Listener
-     */
-    private NoteAdapter.NoteListener noteListener = new NoteAdapter.NoteListener() {
-        @Override
-        public void onClickNote(Note note, View view) {
-            startActivityForResult(EditNoteActivity.buildUpdateIntent(MainActivity.this, note), 0);
+    @Override
+    public void onBackPressed() {
+        if (fabMenuController != null && fabMenuController.isOpened()){
+            fabMenuController.dismiss();
+            return;
         }
-
-        @Override
-        public void onClickOption(Note note, View view) {
-            // menu option
-            PopupMenu popupMenu = new PopupMenu(MainActivity.this, view);
-            popupMenu.inflate(R.menu.menu_popup_note);
-            popupMenu.setOnMenuItemClickListener(item1 -> {
-                switch (item1.getItemId()) {
-                    case R.id.item_edit_note:
-                        onClickNote(note, view);
-                        break;
-                    /*case R.id.item_delete_note:
-                        noteController.attemptDeleteNote(note);
-                        break;*/
-                }
-                return false;
-            });
-
-            popupMenu.show();
-        }
-    };
+        super.onBackPressed();
+    }
 
     /**
      * Folder Listener
@@ -219,11 +199,11 @@ public class MainActivity extends AppCompatActivity {
 
             if (folder.isLocked() && !folder.isTemporarilyUnlocked()) {
                 folderController.requestPassword(folder, folder1 -> {
-                    startActivityForResult(IntoFolderActivity.buildIntent(MainActivity.this, folder1), 0);
+                    startActivityForResult(NotesActivity.buildIntent(MainActivity.this, folder1), 0);
                     overridePendingTransition(R.anim.in_over_from_right, R.anim.anim_static);
                 });
             } else {
-                startActivityForResult(IntoFolderActivity.buildIntent(MainActivity.this, folder), 0);
+                startActivityForResult(NotesActivity.buildIntent(MainActivity.this, folder), 0);
                 overridePendingTransition(R.anim.in_over_from_right, R.anim.anim_static);
             }
 
@@ -264,34 +244,38 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if ((resultCode == EditNoteActivity.RESULT_CREATE || resultCode == EditNoteActivity.RESULT_UPDATE || resultCode == EditNoteActivity.RESULT_DELETE) && data != null) {
-            Note note = data.getParcelableExtra(EditNoteActivity.NOTE_INTENT_KEY);
-            if (note != null) {
+    private NoteAdapter.NoteListener noteListener = new NoteAdapter.NoteListener() {
+        @Override
+        public void onClickNote(Note note, View view) {
+            startActivityForResult(EditNoteActivity.buildUpdateIntent(MainActivity.this, note), 0);
+        }
 
-                switch (resultCode) {
-                    case EditNoteActivity.RESULT_CREATE:
-                        noteViewModel.insert(note);
+        @Override
+        public void onClickOption(Note note, View view, int position) {
+            PopupMenu popupMenu = new PopupMenu(MainActivity.this, view);
+            popupMenu.inflate(R.menu.menu_popup_note);
+            popupMenu.setOnMenuItemClickListener(item1 -> {
+                switch (item1.getItemId()) {
+                    case R.id.item_rename_note:
+                        noteController.attemptRenameNote(note, noteUpdated -> {
+                            // check if is updated
+                            if (noteUpdated != null){
+                                runOnUiThread(() -> noteAdapter.notifyItemChanged(position));
+                            }
+                        });
                         break;
-                    case EditNoteActivity.RESULT_UPDATE:
-                        noteViewModel.update(note);
+                    case R.id.item_edit_note:
+                        onClickNote(note, view);
                         break;
-                    case EditNoteActivity.RESULT_DELETE:
-                        noteViewModel.delete(note);
+                    case R.id.item_delete_note:
+                        noteController.attemptDeleteNote(note);
                         break;
                 }
+                return false;
+            });
 
-            }
+            popupMenu.show();
         }
-    }
+    };
 
-    @Override
-    public void onBackPressed() {
-        /*if (fabMenuController.isOpen()) {
-            fabMenuController.toggleMenu();
-            return;
-        }*/
-        super.onBackPressed();
-    }
 }

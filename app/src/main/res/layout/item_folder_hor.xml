@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
-    android:foreground="?attr/selectableItemBackground"
+    android:background="?attr/selectableItemBackground"
     android:orientation="horizontal">
 
     <FrameLayout
@@ -20,7 +20,7 @@
             android:background="@drawable/bg_round_image_folder"
             android:contentDescription="@string/app_name"
             android:padding="8dp"
-            android:src="@drawable/ic_folder_white" />
+            app:srcCompat="@drawable/ic_folder_white" />
 
         <ImageView
             android:id="@+id/iv_lock"
@@ -32,7 +32,7 @@
             android:contentDescription="@string/app_name"
             android:padding="3dp"
             android:scaleType="centerInside"
-            android:src="@drawable/ic_lock_green" />
+            app:srcCompat="@drawable/ic_lock_green" />
 
     </FrameLayout>
 
@@ -62,17 +62,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="4dp"
-                android:background="@android:color/transparent"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/app_name"
                 android:padding="8dp"
-                android:src="@drawable/ic_more_vertical_gray_18dp" />
+                app:srcCompat="@drawable/ic_more_vertical_gray_18dp" />
 
         </LinearLayout>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#DFDFDF" />
+            android:background="#EEEEEE" />
 
     </LinearLayout>
 

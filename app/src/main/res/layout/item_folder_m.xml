@@ -63,7 +63,7 @@
                         android:contentDescription="@string/app_name"
                         android:focusable="true"
                         android:scaleType="centerInside"
-                        android:src="@drawable/ic_more_vertical_gray_18dp" />
+                        app:srcCompat="@drawable/ic_more_vertical_gray_18dp" />
 
                 </RelativeLayout>
 

@@ -12,6 +12,7 @@ import com.appcode.annotations.model.Note;
 import com.appcode.annotations.util.HistoryModification;
 import com.appcode.annotations.util.Html;
 
+import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
@@ -21,11 +22,13 @@ public class NoteAdapter extends ListAdapter<Note, NoteAdapter.NoteViewHolder> {
 
     private Context context;
     private NoteListener noteListener;
+    private int layoutResId;
 
-    public NoteAdapter(Context context, NoteListener noteListener) {
+    public NoteAdapter(Context context, NoteListener noteListener, @LayoutRes int layoutResId) {
         super(DIFF_CALLBACK);
         this.context = context;
         this.noteListener = noteListener;
+        this.layoutResId = layoutResId;
     }
 
     private static final DiffUtil.ItemCallback<Note> DIFF_CALLBACK = new DiffUtil.ItemCallback<Note>() {
@@ -46,7 +49,8 @@ public class NoteAdapter extends ListAdapter<Note, NoteAdapter.NoteViewHolder> {
     @NonNull
     @Override
     public NoteViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_annotation_vert, parent, false);
+        int layout = (this.layoutResId > 0) ? this.layoutResId : R.layout.item_annotation_vert;
+        View view = LayoutInflater.from(context).inflate(layout, parent, false);
         return new NoteViewHolder(view);
     }
 
@@ -62,7 +66,7 @@ public class NoteAdapter extends ListAdapter<Note, NoteAdapter.NoteViewHolder> {
 
         holder.viewOption.setOnClickListener(v -> {
             if (noteListener != null) {
-                noteListener.onClickOption(note, holder.viewOption);
+                noteListener.onClickOption(note, holder.viewOption, position);
             }
         });
 
@@ -73,13 +77,14 @@ public class NoteAdapter extends ListAdapter<Note, NoteAdapter.NoteViewHolder> {
         holder.tvHistory.setText(HistoryModification.findHistoryByTime(System.currentTimeMillis(), note.getLastModification()));
 
         // sub text
-        if (note.getMessage().isEmpty()) {
-            holder.subTextView.setVisibility(View.GONE);
-        } else {
-            holder.subTextView.setVisibility(View.VISIBLE);
-            holder.subTextView.setText(Html.stripHtml(note.getMessage()));
+        if (holder.subTextView != null){
+            if (note.getMessage().isEmpty()) {
+                holder.subTextView.setVisibility(View.GONE);
+            } else {
+                holder.subTextView.setVisibility(View.VISIBLE);
+                holder.subTextView.setText(Html.stripHtml(note.getMessage()));
+            }
         }
-
     }
 
     class NoteViewHolder extends RecyclerView.ViewHolder {
@@ -101,6 +106,6 @@ public class NoteAdapter extends ListAdapter<Note, NoteAdapter.NoteViewHolder> {
     public interface NoteListener {
         void onClickNote(Note note, View view);
 
-        void onClickOption(Note note, View view);
+        void onClickOption(Note note, View view, int position);
     }
 }

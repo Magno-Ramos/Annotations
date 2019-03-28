@@ -23,22 +23,32 @@ public class FabMenuController implements View.OnClickListener {
     private ToggleCallback toggleCallback;
     private FabListener fabListener;
 
-    private boolean isRotated = false;
+    private boolean isOpen = false;
 
     private View viewLayerFabMenu;
     private FloatingActionButton floatingActionButton;
     private FloatingActionButton fabFolder;
     private FloatingActionButton fabNote;
 
-    public FabMenuController(Context context, FloatingActionButton floatingActionButton, FloatingActionButton fabFolder, FloatingActionButton fabNote, View viewLayerFabMenu) {
+    public FabMenuController(Context context, View viewLayerFabMenu) {
         this.context = context;
-        this.floatingActionButton = floatingActionButton;
-        this.fabFolder = fabFolder;
-        this.fabNote = fabNote;
         this.viewLayerFabMenu = viewLayerFabMenu;
-        this.floatingActionButton.setOnClickListener(this);
+        this.viewLayerFabMenu.setVisibility(View.INVISIBLE);
         this.viewLayerFabMenu.setOnClickListener(onClickLayer());
+    }
+
+    public void setFabMenuToggle (FloatingActionButton floatingActionButton){
+        this.floatingActionButton = floatingActionButton;
+        this.floatingActionButton.setOnClickListener(this);
+    }
+
+    public void setFabFolder(FloatingActionButton fabFolder) {
+        this.fabFolder = fabFolder;
         this.fabFolder.setOnClickListener(onClickFabFolder());
+    }
+
+    public void setFabNote(FloatingActionButton fabNote) {
+        this.fabNote = fabNote;
         this.fabNote.setOnClickListener(onClickFabNote());
     }
 
@@ -71,8 +81,8 @@ public class FabMenuController implements View.OnClickListener {
         toggleMenu();
     }
 
-    public void toggleMenu() {
-        if (!isRotated) {
+    private void toggleMenu() {
+        if (!isOpen) {
             showMenu();
         } else {
             hideMenu();
@@ -137,7 +147,7 @@ public class FabMenuController implements View.OnClickListener {
         animator.start();
         floatingActionButton.startAnimation(rotateAnimation);
 
-        isRotated = !isRotated;
+        isOpen = !isOpen;
 
         if (toggleCallback != null) {
             toggleCallback.onOpen();
@@ -202,22 +212,22 @@ public class FabMenuController implements View.OnClickListener {
         animator.start();
         floatingActionButton.startAnimation(rotateAnimation);
 
-        isRotated = !isRotated;
+        isOpen = !isOpen;
         if (toggleCallback != null) {
             toggleCallback.onHide();
         }
-    }
-
-    public void setToggleCallback(ToggleCallback toggleCallback) {
-        this.toggleCallback = toggleCallback;
     }
 
     public void setFabListener(FabListener fabListener) {
         this.fabListener = fabListener;
     }
 
-    public boolean isOpen() {
-        return isRotated;
+    public boolean isOpened() {
+        return isOpen;
+    }
+
+    public void dismiss() {
+        this.hideMenu();
     }
 
     public interface ToggleCallback {

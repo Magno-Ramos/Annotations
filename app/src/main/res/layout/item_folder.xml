@@ -48,7 +48,7 @@
                         android:contentDescription="@string/app_name"
                         android:scaleType="centerInside"
                         android:transitionName="imageViewTransition"
-                        android:src="@drawable/ic_folder_44" />
+                        app:srcCompat="@drawable/ic_folder_44" />
 
                     <ImageView
                         android:id="@+id/bt_option"
@@ -60,7 +60,7 @@
                         android:contentDescription="@string/app_name"
                         android:focusable="true"
                         android:scaleType="centerInside"
-                        android:src="@drawable/ic_more_vertical_gray_18dp"
+                        app:srcCompat="@drawable/ic_more_vertical_gray_18dp"
                         android:visibility="visible" />
 
                 </RelativeLayout>

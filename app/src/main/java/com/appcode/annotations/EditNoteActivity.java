@@ -9,6 +9,7 @@ import android.view.View;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.appcode.annotations.model.Note;
+import com.appcode.annotations.repository.NoteRepository;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,10 +20,6 @@ import jp.wasabeef.richeditor.RichEditor;
 
 public class EditNoteActivity extends AppCompatActivity {
 
-    public static final int RESULT_UPDATE = 1;
-    public static final int RESULT_CREATE = 2;
-    public static final int RESULT_DELETE = 3;
-
     public static final String NOTE_INTENT_KEY = "note";
 
     @BindView(R.id.rich_editor)
@@ -30,6 +27,8 @@ public class EditNoteActivity extends AppCompatActivity {
 
     private Note initNote;
     private Note note;
+
+    private NoteRepository noteRepository;
 
     public static Intent buildUpdateIntent(Context context, Note note) {
         Intent intent = new Intent(context, EditNoteActivity.class);
@@ -43,6 +42,8 @@ public class EditNoteActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit_note);
 
         ButterKnife.bind(this);
+
+        noteRepository = new NoteRepository(getApplication(), false);
 
         if (getIntent() != null) {
             note = getIntent().getParcelableExtra(NOTE_INTENT_KEY);
@@ -62,9 +63,7 @@ public class EditNoteActivity extends AppCompatActivity {
         editor.setPadding(10, 10, 10, 10);
         editor.setPlaceholder(getString(R.string.message));
         editor.focusEditor();
-        editor.setOnTextChangeListener(text -> {
-            note.setMessage(text);
-        });
+        editor.setOnTextChangeListener(text -> note.setMessage(text));
     }
 
     @Override
@@ -96,16 +95,14 @@ public class EditNoteActivity extends AppCompatActivity {
                     Intent intent = new Intent();
                     intent.putExtra(NOTE_INTENT_KEY, note);
 
-                    setResult(RESULT_DELETE, intent);
+                    this.noteRepository.delete(note);
                     finish();
                 }).build();
         dialog.show();
     }
 
     private void saveAndFinish() {
-        Intent intent = new Intent();
-        intent.putExtra(NOTE_INTENT_KEY, note);
-        setResult(RESULT_UPDATE, intent);
+        this.noteRepository.update(note, null);
         finish();
     }
 

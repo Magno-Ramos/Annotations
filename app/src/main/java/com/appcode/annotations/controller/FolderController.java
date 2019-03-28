@@ -3,6 +3,7 @@ package com.appcode.annotations.controller;
 import android.content.Context;
 import android.text.InputType;
 import android.view.Gravity;
+import android.view.Window;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -62,6 +63,8 @@ public class FolderController {
 
                         Toast.makeText(context, R.string.folder_blocked_successfully, Toast.LENGTH_SHORT).show();
                     }).build();
+
+            configAnimation(materialDialog);
             materialDialog.show();
 
         } else {
@@ -72,9 +75,8 @@ public class FolderController {
     }
 
     public void requestPassword(Folder folder, PasswordCallback passwordCallback) {
-        new MaterialDialog.Builder(context)
-                .iconRes(R.drawable.ic_lock_black)
-                .title(R.string.password)
+        MaterialDialog materialDialog = new MaterialDialog.Builder(context)
+                .title(folder.getTitle())
                 .autoDismiss(false)
                 .inputType(InputType.TYPE_TEXT_VARIATION_PASSWORD)
                 .inputRange(Folder.MIN_PASSWORD, Folder.MAX_PASSWORD)
@@ -92,8 +94,10 @@ public class FolderController {
                         }
                     }
                 })
-                .build()
-                .show();
+                .build();
+
+        configAnimation(materialDialog);
+        materialDialog.show();
     }
 
     public void attemptUnlockFolder(final Folder folder) {
@@ -115,7 +119,7 @@ public class FolderController {
     }
 
     public void attemptCreateFolder() {
-        new MaterialDialog.Builder(context)
+        MaterialDialog materialDialog = new MaterialDialog.Builder(context)
                 .iconRes(R.drawable.ic_folder)
                 .title(context.getString(R.string.new_folder))
                 .inputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS)
@@ -125,12 +129,14 @@ public class FolderController {
                     folder.setTitle(input.toString());
 
                     foldersViewModel.insert(folder);
-                })
-                .show();
+                }).build();
+
+        configAnimation(materialDialog);
+        materialDialog.show();
     }
 
     private void showDialogRenameFolder(Folder folder) {
-        new MaterialDialog.Builder(context)
+        MaterialDialog materialDialog = new MaterialDialog.Builder(context)
                 .title(R.string.rename_folder)
                 .inputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS)
                 .inputRange(Folder.MIN_TITLE_LENGTH, Folder.MAX_TITLE_LENGTH)
@@ -144,20 +150,34 @@ public class FolderController {
                     updated.setPassword(folder.getPassword());
 
                     foldersViewModel.update(updated);
-                })
-                .show();
+                }).build();
+
+        configAnimation(materialDialog);
+        materialDialog.show();
     }
 
     private void showDialogDeleteFolder(Folder folder) {
-        new MaterialDialog.Builder(context)
+        MaterialDialog materialDialog = new MaterialDialog.Builder(context)
                 .title(R.string.delete)
                 .content(R.string.question_delete_folder_with_notes)
                 .positiveText(R.string.confirm)
                 .negativeText(R.string.cancel)
-                .onPositive((dialog, which) -> foldersViewModel.delete(folder)).build().show();
+                .onPositive((dialog, which) -> foldersViewModel.delete(folder)).build();
+
+        configAnimation(materialDialog);
+        materialDialog.show();
     }
 
     public interface PasswordCallback {
         void onSuccess(Folder folder);
+    }
+
+    private void configAnimation(MaterialDialog materialDialog) {
+        if (materialDialog != null && !materialDialog.isShowing()) {
+            Window window = materialDialog.getWindow();
+            if (window != null) {
+                window.getAttributes().windowAnimations = R.style.DialogAnimation;
+            }
+        }
     }
 }
