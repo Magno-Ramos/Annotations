@@ -5,10 +5,9 @@
     android:id="@+id/itemView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
+    android:background="?attr/selectableItemBackgroundBorderless"
     android:clickable="true"
     android:focusable="true"
-    android:foreground="?attr/selectableItemBackgroundBorderless"
     android:minHeight="70dp"
     android:orientation="horizontal">
 
@@ -40,7 +39,7 @@
             android:drawablePadding="8dp"
             android:gravity="start|center_vertical"
             android:paddingTop="4dp"
-            android:textColor="#333333"
+            android:textColor="?textPrimaryColor"
             android:textSize="18sp"
             android:textStyle="bold"
             tools:text="Files" />
@@ -55,7 +54,7 @@
             android:paddingTop="4dp"
             android:paddingEnd="0dp"
             android:paddingBottom="4dp"
-            android:textColor="#666666"
+            android:textColor="?textSecondaryColor"
             tools:text="txt, pdf, word, docx, oaisdiosnad, ibnaisund, ninasdnoi ansdnasoidn, oainsdioan" />
 
     </LinearLayout>
@@ -86,6 +85,7 @@
             android:drawableStart="@drawable/ic_history_gray_18dp"
             android:drawablePadding="4dp"
             android:padding="8dp"
+            android:textColor="?textSecondaryColor"
             android:textSize="12sp"
             tools:text="3 dias atrás" />
 

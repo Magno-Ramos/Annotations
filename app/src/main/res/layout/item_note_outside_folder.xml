@@ -41,7 +41,7 @@
                 android:drawablePadding="8dp"
                 android:gravity="start|center_vertical"
                 android:paddingTop="4dp"
-                android:textColor="#333333"
+                android:textColor="?textPrimaryColor"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toTopOf="@+id/tv_history"
                 app:layout_constraintEnd_toStartOf="@+id/bt_option"
@@ -64,7 +64,7 @@
                 android:paddingStart="0dp"
                 android:paddingTop="4dp"
                 android:paddingEnd="0dp"
-                android:textColor="#666666"
+                android:textColor="?textSecondaryColor"
                 android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/bt_option"
@@ -88,13 +88,12 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_more_vertical_gray_18dp" />
 
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#EEEEEE" />
+            android:background="?borderColor" />
 
     </LinearLayout>
 

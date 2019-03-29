@@ -1,19 +1,29 @@
 <resources>
 
-    <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-       <!-- <item name="android:fontFamily">@font/raleway</item>-->
-        
-        <!-- enable windows content transition -->
+        <item name="android:windowBackground">@color/background_light</item>
         <item name="android:windowActivityTransitions">true</item>
+
+        <item name="textPrimaryColor">@color/colorTextPrimary</item>
+        <item name="textSecondaryColor">@color/colorTextSecondary</item>
+        <item name="borderColor">@color/borderColor</item>
+        <item name="accent">@color/colorAccent</item>
     </style>
 
-    <style name="Theme.Light" parent="Theme.AppCompat.Light">
-        <item name="fontFamily">@font/raleway</item>
+    <style name="AppThemeDark" parent="Theme.MaterialComponents">
+        <item name="colorPrimary">@color/colorPrimary_ThemeDark</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark_ThemeDark</item>
+        <item name="colorAccent">@color/colorAccent_ThemeDark</item>
+        <item name="android:windowBackground">@color/background_dark</item>
+        <item name="android:windowActivityTransitions">true</item>
+
+        <item name="textPrimaryColor">@color/colorTextPrimary_ThemeDark</item>
+        <item name="textSecondaryColor">@color/colorTextSecondary_ThemeDark</item>
+        <item name="borderColor">@color/borderColor_ThemeDark</item>
+        <item name="accent">@color/colorAccent_ThemeDark</item>
     </style>
 
     <!-- dialog animation -->
