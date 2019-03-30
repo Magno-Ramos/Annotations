@@ -10,10 +10,10 @@
         <item name="textPrimaryColor">@color/colorTextPrimary</item>
         <item name="textSecondaryColor">@color/colorTextSecondary</item>
         <item name="borderColor">@color/borderColor</item>
-        <item name="accent">@color/colorAccent</item>
+        <item name="accent">@color/colorPrimary</item>
     </style>
 
-    <style name="AppThemeDark" parent="Theme.MaterialComponents">
+    <style name="AppTheme.Dark" parent="Theme.MaterialComponents">
         <item name="colorPrimary">@color/colorPrimary_ThemeDark</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark_ThemeDark</item>
         <item name="colorAccent">@color/colorAccent_ThemeDark</item>

@@ -64,6 +64,13 @@ public class NoteAdapter extends ListAdapter<Note, NoteAdapter.NoteViewHolder> {
             }
         });
 
+        holder.itemView.setOnLongClickListener(v -> {
+            if (noteListener != null) {
+                noteListener.onLongClickNote(note, v, position);
+            }
+            return true;
+        });
+
         holder.viewOption.setOnClickListener(v -> {
             if (noteListener != null) {
                 noteListener.onClickOption(note, holder.viewOption, position);
@@ -77,7 +84,7 @@ public class NoteAdapter extends ListAdapter<Note, NoteAdapter.NoteViewHolder> {
         holder.tvHistory.setText(HistoryModification.findHistoryByTime(System.currentTimeMillis(), note.getLastModification()));
 
         // sub text
-        if (holder.subTextView != null){
+        if (holder.subTextView != null) {
             if (note.getMessage().isEmpty()) {
                 holder.subTextView.setVisibility(View.GONE);
             } else {
@@ -105,6 +112,8 @@ public class NoteAdapter extends ListAdapter<Note, NoteAdapter.NoteViewHolder> {
 
     public interface NoteListener {
         void onClickNote(Note note, View view);
+
+        void onLongClickNote(Note note, View view, int position);
 
         void onClickOption(Note note, View view, int position);
     }

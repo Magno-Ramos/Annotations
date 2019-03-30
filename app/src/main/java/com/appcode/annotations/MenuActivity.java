@@ -7,8 +7,6 @@ import com.appcode.annotations.fragments.MenuFragmentListener;
 import com.appcode.annotations.fragments.NotesFragment;
 import com.appcode.annotations.fragments.TasksFragment;
 import com.appcode.annotations.fragments.ThemesFragment;
-import com.appcode.annotations.theme.Theme;
-import com.appcode.annotations.theme.ThemeConfig;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.NonNull;
@@ -19,21 +17,18 @@ import androidx.fragment.app.Fragment;
 public class MenuActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
     private MenuFragmentListener menuFragmentListener;
+    private BottomNavigationView bottomNavigationView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation_view);
+        bottomNavigationView = findViewById(R.id.bottom_navigation_view);
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
 
-        ThemeConfig.get(this).configView(bottomNavigationView, Theme.DARK);
-
         if (savedInstanceState == null) {
-            NotesFragment notesFragment = new NotesFragment();
-            menuFragmentListener = notesFragment;
-            startFragment(notesFragment);
+            startFragment(Fragments.NOTES);
         }
     }
 
@@ -41,31 +36,70 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.item_notes:
-                NotesFragment notesFragment = new NotesFragment();
-                menuFragmentListener = notesFragment;
-                startFragment(notesFragment);
+                startFragment(Fragments.NOTES);
                 break;
             case R.id.item_tasks:
-                startFragment(new TasksFragment());
+                startFragment(Fragments.TASKS);
                 break;
             case R.id.item_themes:
-                startFragment(new ThemesFragment());
+                startFragment(Fragments.THEMES);
                 break;
         }
         return true;
     }
 
-    private void startFragment(Fragment fragment) {
+    private void startFragment(Fragments type) {
+        Fragment fragment;
+
+        switch (type) {
+            case NOTES:
+            default:
+                NotesFragment notesFragment = new NotesFragment();
+                menuFragmentListener = notesFragment;
+                fragment = notesFragment;
+                break;
+            case TASKS:
+                fragment = new TasksFragment();
+                break;
+            case THEMES:
+                fragment = new ThemesFragment();
+                break;
+        }
+
+
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fragment_container, fragment)
-                .commit();
+                .commitNowAllowingStateLoss();
     }
 
     @Override
     public void onBackPressed() {
-        if (menuFragmentListener != null && menuFragmentListener.onBackPressed()) {
-            super.onBackPressed();
+        if (menuFragmentListener != null && !menuFragmentListener.onBackPressed()) {
+            return;
+        }
+
+        if (bottomNavigationView.getSelectedItemId() != bottomNavigationView.getMenu().getItem(0).getItemId()) {
+            bottomNavigationView.setSelectedItemId(bottomNavigationView.getMenu().getItem(0).getItemId());
+            return;
+        }
+
+        super.onBackPressed();
+    }
+
+    private enum Fragments {
+        NOTES("Notes"),
+        TASKS("Tasks"),
+        THEMES("Themes");
+
+        private String tag;
+
+        Fragments(String tag) {
+            this.tag = tag;
+        }
+
+        public String getTag() {
+            return tag;
         }
     }
 }

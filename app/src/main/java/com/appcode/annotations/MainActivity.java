@@ -183,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (fabMenuController != null && fabMenuController.isOpened()){
+        if (fabMenuController != null && fabMenuController.isOpened()) {
             fabMenuController.dismiss();
             return;
         }
@@ -251,6 +251,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
+        public void onLongClickNote(Note note, View view, int position) {
+            onClickOption(note, view, position);
+        }
+
+        @Override
         public void onClickOption(Note note, View view, int position) {
             PopupMenu popupMenu = new PopupMenu(MainActivity.this, view);
             popupMenu.inflate(R.menu.menu_popup_note);
@@ -259,7 +264,7 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.item_rename_note:
                         noteController.attemptRenameNote(note, noteUpdated -> {
                             // check if is updated
-                            if (noteUpdated != null){
+                            if (noteUpdated != null) {
                                 runOnUiThread(() -> noteAdapter.notifyItemChanged(position));
                             }
                         });

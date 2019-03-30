@@ -30,8 +30,7 @@ public class NoteController {
                     Note note = new Note();
                     note.setTitle(input.toString().trim());
 
-                    noteViewModel.insert(note);
-                    callback.onSuccess(note);
+                    noteViewModel.insert(note, callback);
                 })
                 .show();
     }

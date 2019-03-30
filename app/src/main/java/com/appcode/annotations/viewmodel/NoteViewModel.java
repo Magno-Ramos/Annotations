@@ -2,6 +2,7 @@ package com.appcode.annotations.viewmodel;
 
 import android.app.Application;
 
+import com.appcode.annotations.callback.Callback;
 import com.appcode.annotations.callback.OnUpdateListener;
 import com.appcode.annotations.model.Note;
 import com.appcode.annotations.repository.NoteRepository;
@@ -21,8 +22,8 @@ public class NoteViewModel extends AndroidViewModel {
         noteRepository = new NoteRepository(application, true);
     }
 
-    public void insert(Note note) {
-        noteRepository.insert(note, null);
+    public void insert(Note note, Callback<Note> noteCallback) {
+        noteRepository.insert(note, noteCallback::onSuccess);
     }
 
     public void update(Note note) {
@@ -33,7 +34,7 @@ public class NoteViewModel extends AndroidViewModel {
         noteRepository.delete(note);
     }
 
-    public LiveData<List<Note>> findAllNotesOutsideFolder (){
+    public LiveData<List<Note>> findAllNotesOutsideFolder() {
         return noteRepository.findAllNotesOutsideFolder();
     }
 

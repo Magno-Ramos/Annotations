@@ -6,7 +6,7 @@ import androidx.annotation.StyleRes;
 
 public enum Theme {
     LIGHT(R.style.AppTheme),
-    DARK(R.style.AppThemeDark);
+    DARK(R.style.AppTheme_Dark);
 
     private int style;
 

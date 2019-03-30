@@ -21,24 +21,14 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 public class NotesActivity extends AppCompatActivity implements NoteAdapter.NoteListener, OnCreateListener<Note> {
 
-    public static final String KEY_INTENT_FOLDER = "KEY_INTENT_FOLDER";
+    public static final String KEY_INTENT_FOLDER = "INTENT_KEY_FOLDER";
 
-    @BindView(R.id.text_view_empty_notes)
-    TextView textViewEmpty;
-
-    @BindView(R.id.recyclerViewNote)
-    RecyclerView recyclerView;
-
-    @BindView(R.id.fab)
-    FloatingActionButton fab;
+    private TextView textViewEmpty;
 
     private NoteAdapter noteAdapter;
     private InFolderController inFolderController;
@@ -55,12 +45,13 @@ public class NotesActivity extends AppCompatActivity implements NoteAdapter.Note
         setContentView(R.layout.activity_notes);
         setupActionBar();
 
-        ButterKnife.bind(this);
+        FloatingActionButton fab = findViewById(R.id.fab);
+        RecyclerView recyclerView = findViewById(R.id.recyclerViewNote);
+        textViewEmpty = findViewById(R.id.text_view_empty_notes);
 
-        noteAdapter = new NoteAdapter(this, this, R.layout.item_annotation_vert);
+        noteAdapter = new NoteAdapter(this, this, R.layout.item_note_outside_folder);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        recyclerView.setLayoutAnimation(AnimationUtils.loadLayoutAnimation(this, R.anim.layout_animation_fall_down));
+        recyclerView.setLayoutAnimation(AnimationUtils.loadLayoutAnimation(this, R.anim.layout_animation_from_right));
         recyclerView.setAdapter(noteAdapter);
 
         Folder folder = getIntent().getParcelableExtra(KEY_INTENT_FOLDER);
@@ -121,6 +112,11 @@ public class NotesActivity extends AppCompatActivity implements NoteAdapter.Note
     }
 
     @Override
+    public void onLongClickNote(Note note, View view, int position) {
+        onClickOption(note, view, position);
+    }
+
+    @Override
     public void onClickOption(Note note, View view, int position) {
         PopupMenu popupMenu = new PopupMenu(NotesActivity.this, view);
         popupMenu.inflate(R.menu.menu_popup_note);
@@ -129,7 +125,7 @@ public class NotesActivity extends AppCompatActivity implements NoteAdapter.Note
                 case R.id.item_rename_note:
                     inFolderController.attemptRenameNote(note, noteUpdated -> {
                         // check if is updated
-                        if (noteUpdated != null){
+                        if (noteUpdated != null) {
                             runOnUiThread(() -> noteAdapter.notifyItemChanged(position));
                         }
                     });

@@ -23,6 +23,7 @@ import com.appcode.annotations.controller.FolderController;
 import com.appcode.annotations.controller.NoteController;
 import com.appcode.annotations.model.Folder;
 import com.appcode.annotations.model.Note;
+import com.appcode.annotations.util.FadeUtil;
 import com.appcode.annotations.viewmodel.FoldersViewModel;
 import com.appcode.annotations.viewmodel.NoteViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -97,7 +98,6 @@ public class NotesFragment extends Fragment implements MenuFragmentListener {
         folderAdapter = new FolderHorizontalAdapter(context, folderListener);
 
         RecyclerView recyclerViewFolder = view.findViewById(R.id.recyclerViewFolder);
-        recyclerViewFolder.setHasFixedSize(true);
         recyclerViewFolder.setLayoutManager(new LinearLayoutManager(context));
         recyclerViewFolder.setAdapter(folderAdapter);
 
@@ -105,8 +105,9 @@ public class NotesFragment extends Fragment implements MenuFragmentListener {
         foldersViewModel.getAllFolders().observe(this, folders -> {
             folderAdapter.submitList(folders);
             emptyFolders = folders.isEmpty();
-            viewFolders.setVisibility(emptyFolders ? View.GONE : View.VISIBLE);
-            checkEmptyAndShowMessage();
+
+            toggleVisibleFolders(emptyFolders);
+            checkAndShowEmptyMessage();
         });
 
         folderController = new FolderController(context, foldersViewModel);
@@ -123,16 +124,50 @@ public class NotesFragment extends Fragment implements MenuFragmentListener {
         noteViewModel.findAllNotesOutsideFolder().observe(this, notes -> {
             noteAdapter.submitList(notes);
             emptyNotes = notes.isEmpty();
-            viewNotes.setVisibility(emptyNotes ? View.INVISIBLE : View.VISIBLE);
-            checkEmptyAndShowMessage();
+
+            toggleVisibleNotes(emptyNotes);
+            checkAndShowEmptyMessage();
         });
 
         noteController = new NoteController(context, noteViewModel);
     }
 
-    private void checkEmptyAndShowMessage() {
-        emptyTextView.setVisibility((emptyFolders && emptyNotes) ? View.VISIBLE : View.GONE);
-        viewFolders.setVisibility((emptyFolders && emptyNotes) ? View.GONE : View.VISIBLE);
+    private void checkAndShowEmptyMessage() {
+        if (emptyFolders && emptyNotes) {
+            // show empty message
+            FadeUtil.show(emptyTextView, 200);
+        } else {
+            // check if is visible
+            if (emptyTextView.getVisibility() == View.VISIBLE) {
+                // hide empty message
+                FadeUtil.hide(emptyTextView, 200);
+            }
+        }
+    }
+
+    private void toggleVisibleNotes(boolean isEmpty) {
+        if (isEmpty) {
+            // hide
+            FadeUtil.hide(viewNotes, 200);
+        } else {
+            // show
+            if (viewNotes.getVisibility() != View.VISIBLE) {
+                FadeUtil.show(viewNotes, 200);
+            }
+        }
+    }
+
+    private void toggleVisibleFolders(boolean isEmpty) {
+        if (isEmpty) {
+            // hide
+            FadeUtil.hide(viewFolders, 200);
+        } else {
+
+            // show
+            if (viewFolders.getVisibility() != View.VISIBLE) {
+                FadeUtil.show(viewFolders, 200);
+            }
+        }
     }
 
     /**
@@ -149,11 +184,11 @@ public class NotesFragment extends Fragment implements MenuFragmentListener {
 
             @Override
             public void onClickFabNote(View view) {
-                        noteController.attemptCreateNote(new Callback<Note>() {
+                noteController.attemptCreateNote(new Callback<Note>() {
                     @Override
                     public void onSuccess(Note note) {
                         startActivity(EditNoteActivity.buildUpdateIntent(context, note));
-                       // overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
+                        overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
                     }
                 });
             }
@@ -170,11 +205,11 @@ public class NotesFragment extends Fragment implements MenuFragmentListener {
             if (folder.isLocked() && !folder.isTemporarilyUnlocked()) {
                 folderController.requestPassword(folder, folder1 -> {
                     startActivity(NotesActivity.buildIntent(context, folder1));
-                   // overridePendingTransition(R.anim.in_over_from_right, R.anim.anim_static);
+                    overridePendingTransition(R.anim.in_over_from_right, R.anim.anim_static);
                 });
             } else {
                 startActivity(NotesActivity.buildIntent(context, folder));
-                 // overridePendingTransition(R.anim.in_over_from_right, R.anim.anim_static);
+                overridePendingTransition(R.anim.in_over_from_right, R.anim.anim_static);
             }
 
         }
@@ -215,9 +250,15 @@ public class NotesFragment extends Fragment implements MenuFragmentListener {
     };
 
     private NoteAdapter.NoteListener noteListener = new NoteAdapter.NoteListener() {
+
         @Override
         public void onClickNote(Note note, View view) {
             startActivityForResult(EditNoteActivity.buildUpdateIntent(context, note), 0);
+        }
+
+        @Override
+        public void onLongClickNote(Note note, View view, int position) {
+            onClickOption(note, view, position);
         }
 
         @Override
@@ -228,7 +269,7 @@ public class NotesFragment extends Fragment implements MenuFragmentListener {
                 switch (item1.getItemId()) {
                     case R.id.item_rename_note:
                         noteController.attemptRenameNote(note, noteUpdated -> {
-                            if (noteUpdated != null){
+                            if (noteUpdated != null) {
                                 new Handler(Looper.getMainLooper()).post(() -> noteAdapter.notifyItemChanged(position));
                             }
                         });
@@ -247,9 +288,15 @@ public class NotesFragment extends Fragment implements MenuFragmentListener {
         }
     };
 
+    private void overridePendingTransition(int enterAnim, int exitAnim) {
+        if (getActivity() != null) {
+            getActivity().overridePendingTransition(enterAnim, exitAnim);
+        }
+    }
+
     @Override
     public boolean onBackPressed() {
-        if (fabMenuController != null && fabMenuController.isOpened()){
+        if (fabMenuController != null && fabMenuController.isOpened()) {
             fabMenuController.dismiss();
             return false;
         }
