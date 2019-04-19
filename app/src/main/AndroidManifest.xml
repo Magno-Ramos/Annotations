@@ -3,7 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.upcode.annotations">
 
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
     <application
+        android:name=".NoteApp"
         android:allowBackup="true"
         android:fullBackupContent="true"
         android:icon="@mipmap/ic_launcher"
@@ -13,11 +16,14 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
 
+        <uses-library android:name="android.test.runner"
+            android:required="false" />
+
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="@string/admob_id" />
+            android:value="@string/ads_id" />
 
-        <activity android:name="com.upcode.annotations.MenuActivity">
+        <activity android:name="com.upcode.annotations.activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -25,9 +31,24 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="com.upcode.annotations.MainActivity" />
-        <activity android:name="com.upcode.annotations.EditNoteActivity" />
-        <activity android:name="com.upcode.annotations.NotesActivity" />
+        <activity android:name="com.upcode.annotations.activities.EditNoteActivity" />
+        <activity android:name="com.upcode.annotations.activities.NotesActivity" />
+
+        <service android:name=".service.UpdateNoteService" />
+        <service android:name=".service.CheckAlarmService" />
+
+        <receiver
+            android:name=".receiver.BootDeviceReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".receiver.AlarmReceiver" />
 
     </application>
 

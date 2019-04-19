@@ -1,11 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:ignore="ContentDescription">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvAlarm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="8dp"
+            android:drawableStart="@drawable/ic_alarm_off"
+            android:drawablePadding="8dp"
+            android:gravity="center_vertical"
+            android:textColor="#555555"
+            android:textSize="12sp" />
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="1dp"
+            android:background="#CCCCCC" />
+
+    </LinearLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -25,70 +48,63 @@
         android:layout_height="1dp"
         android:background="#CCCCCC" />
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="horizontal"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
+        <ImageButton
+            android:id="@+id/bt_bold"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp">
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="8dp"
+            android:src="@drawable/ic_format_bold" />
+
+        <ImageButton
+            android:id="@+id/bt_italic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/bt_bold"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="8dp"
+            android:src="@drawable/ic_format_italic" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:orientation="horizontal">
 
             <ImageButton
-                android:id="@+id/bt_bold"
+                android:id="@+id/bt_left"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="8dp"
+                android:src="@drawable/ic_format_align_left" />
+
+            <ImageButton
+                android:id="@+id/bt_center"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:padding="8dp"
-                app:srcCompat="@drawable/ic_format_bold" />
+                android:src="@drawable/ic_format_align_center" />
 
             <ImageButton
-                android:id="@+id/bt_italic"
+                android:id="@+id/bt_right"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toEndOf="@id/bt_bold"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:padding="8dp"
-                app:srcCompat="@drawable/ic_format_italic" />
+                android:src="@drawable/ic_format_align_right" />
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:orientation="horizontal">
+        </LinearLayout>
 
-                <ImageButton
-                    android:id="@+id/bt_left"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:padding="8dp"
-                    app:srcCompat="@drawable/ic_format_align_left" />
-
-                <ImageButton
-                    android:id="@+id/bt_center"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:padding="8dp"
-                    app:srcCompat="@drawable/ic_format_align_center" />
-
-                <ImageButton
-                    android:id="@+id/bt_right"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:padding="8dp"
-                    app:srcCompat="@drawable/ic_format_align_right" />
-
-            </LinearLayout>
-
-        </RelativeLayout>
-
-    </LinearLayout>
+    </RelativeLayout>
 
 </LinearLayout>

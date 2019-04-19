@@ -90,6 +90,9 @@ public class FabMenuController implements View.OnClickListener {
     }
 
     private void showMenu() {
+        fabFolder.setVisibility(View.VISIBLE);
+        fabNote.setVisibility(View.VISIBLE);
+
         // rotate
         RotateAnimation rotateAnimation = new RotateAnimation(0, -45, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         rotateAnimation.setDuration(ANIM_TIME);
@@ -155,6 +158,9 @@ public class FabMenuController implements View.OnClickListener {
     }
 
     private void hideMenu() {
+        fabFolder.setVisibility(View.INVISIBLE);
+        fabNote.setVisibility(View.INVISIBLE);
+
         // rotation
         RotateAnimation rotateAnimation = new RotateAnimation(-45, 0, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         rotateAnimation.setDuration(ANIM_TIME);

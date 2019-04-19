@@ -5,7 +5,6 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowBackground">@color/background_light</item>
-        <item name="android:windowActivityTransitions">true</item>
 
         <item name="textPrimaryColor">@color/colorTextPrimary</item>
         <item name="textSecondaryColor">@color/colorTextSecondary</item>
@@ -13,23 +12,17 @@
         <item name="accent">@color/colorPrimary</item>
     </style>
 
-    <style name="AppTheme.Dark" parent="Theme.MaterialComponents">
-        <item name="colorPrimary">@color/colorPrimary_ThemeDark</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark_ThemeDark</item>
-        <item name="colorAccent">@color/colorAccent_ThemeDark</item>
-        <item name="android:windowBackground">@color/background_dark</item>
-        <item name="android:windowActivityTransitions">true</item>
-
-        <item name="textPrimaryColor">@color/colorTextPrimary_ThemeDark</item>
-        <item name="textSecondaryColor">@color/colorTextSecondary_ThemeDark</item>
-        <item name="borderColor">@color/borderColor_ThemeDark</item>
-        <item name="accent">@color/colorAccent_ThemeDark</item>
-    </style>
-
     <!-- dialog animation -->
     <style name="DialogAnimation">
         <item name="android:windowEnterAnimation">@anim/modal_in</item>
         <item name="android:windowExitAnimation">@anim/modal_out_fade</item>
+    </style>
+
+    <style name="WideDialog" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
+        <item name="android:windowEnterAnimation">@anim/modal_in</item>
+        <item name="android:windowExitAnimation">@anim/modal_out_fade</item>
+        <item name="windowFixedWidthMajor">95%</item>
+        <item name="windowFixedHeightMajor">95%</item>
     </style>
 
 </resources>

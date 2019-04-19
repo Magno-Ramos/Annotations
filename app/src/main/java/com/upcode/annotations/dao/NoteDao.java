@@ -24,18 +24,27 @@ public interface NoteDao {
     @Update
     void update(Note note);
 
+    @Query("SELECT * FROM note_table WHERE id = :id")
+    Note findNoteById(long id);
+
+    @Query("SELECT * FROM note_table ORDER BY registered DESC LIMIT 1")
+    Note findLastNoteInserted();
+
     @Query("SELECT * FROM note_table WHERE folder_id = 0")
     LiveData<List<Note>> findAll();
 
     @Query("SELECT * FROM note_table WHERE folder_id = :id")
     LiveData<List<Note>> findAllByFolderId(int id);
 
-    @Query("SELECT * FROM note_table ORDER BY last_modification ASC LIMIT 5")
-    LiveData<List<Note>> findRecentFilesChanged();
+    @Query("SELECT * FROM note_table WHERE alarm > 0 AND alarm <= :currentTime")
+    List<Note> findNotesByAlarmEnableAndHasObsolete(long currentTime);
 
-    @Query("SELECT * FROM note_table WHERE id = :id")
-    Note findById(long id);
+    @Query("SELECT * FROM note_table ORDER BY last_modification ASC LIMIT 5")
+    LiveData<List<Note>> findRecentNotesChanged();
 
     @Query("SELECT * FROM note_table WHERE folder_id = 0")
     LiveData<List<Note>> findAllNotesOutsideFolder();
+
+    @Query("SELECT * FROM note_table WHERE alarm > :currentTime")
+    List<Note> findAllNotesByAlarmHasAfter(long currentTime);
 }

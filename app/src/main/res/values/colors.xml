@@ -11,18 +11,6 @@
     <color name="borderColor">#EEEEEE</color>
 
     <!-- Theme Dark -->
-    <color name="colorPrimary_ThemeDark">#252525</color>
-    <color name="colorPrimaryDark_ThemeDark">#212121</color>
-    <color name="colorAccent_ThemeDark">#2196F3</color>
-    <color name="background_dark">#323232</color>
-    <color name="colorTextPrimary_ThemeDark">#fdfdfd</color>
-    <color name="colorTextSecondary_ThemeDark">#999999</color>
-    <color name="borderColor_ThemeDark">#444444</color>
-
-    <color name="black">#000000</color>
-    <color name="black_gray">#333333</color>
     <color name="white">#FFFFFF</color>
     <color name="green_color">#4CAF50</color>
-    <color name="red_color">#9D504C</color>
-    <color name="gray">#999999</color>
 </resources>

@@ -9,16 +9,24 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.upcode.annotations.R;
 import com.upcode.annotations.model.Folder;
-import com.upcode.annotations.viewmodel.FoldersViewModel;
+import com.upcode.annotations.repository.FolderRepository;
+
+import java.util.List;
+
+import androidx.lifecycle.LiveData;
 
 public class FolderController {
 
     private Context context;
-    private FoldersViewModel foldersViewModel;
+    private FolderRepository folderRepository;
 
-    public FolderController(Context context, FoldersViewModel foldersViewModel) {
+    public static FolderController getInstance(Context context, FolderRepository folderRepository) {
+        return new FolderController(context, folderRepository);
+    }
+
+    private FolderController(Context context, FolderRepository folderRepository) {
         this.context = context;
-        this.foldersViewModel = foldersViewModel;
+        this.folderRepository = folderRepository;
     }
 
     public void attemptRenameFolder(final Folder folder) {
@@ -47,20 +55,10 @@ public class FolderController {
                     .autoDismiss(false)
                     .input(R.string.enter_a_password, R.string.empty_text, (dialog, input) -> {
 
-                        Folder updated = new Folder();
-                        updated.setId(folder.getId());
-                        updated.setRegistered(folder.getRegistered());
-                        updated.setTitle(folder.getTitle());
+                        String password = input.toString().trim();
+                        folderRepository.lockFolder(folder, password);
 
-                        //update
-                        String pass = input.toString().trim();
-
-                        updated.setLocked(true);
-                        updated.setPassword(pass);
-
-                        foldersViewModel.update(updated);
                         dialog.dismiss();
-
                         Toast.makeText(context, R.string.folder_blocked_successfully, Toast.LENGTH_SHORT).show();
                     }).build();
 
@@ -102,19 +100,7 @@ public class FolderController {
 
     public void attemptUnlockFolder(final Folder folder) {
         if (folder.isLocked()) {
-            requestPassword(folder, folder1 -> {
-
-                Folder updated = new Folder();
-                updated.setId(folder.getId());
-                updated.setRegistered(folder.getRegistered());
-                updated.setTitle(folder.getTitle());
-
-                //update
-                updated.setLocked(false);
-                updated.setPassword("");
-
-                foldersViewModel.update(updated);
-            });
+            requestPassword(folder, folder1 -> folderRepository.unlockFolder(folder));
         }
     }
 
@@ -128,7 +114,7 @@ public class FolderController {
                     Folder folder = new Folder();
                     folder.setTitle(input.toString());
 
-                    foldersViewModel.insert(folder);
+                    folderRepository.insert(folder);
                 }).build();
 
         configAnimation(materialDialog);
@@ -141,15 +127,8 @@ public class FolderController {
                 .inputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS)
                 .inputRange(Folder.MIN_TITLE_LENGTH, Folder.MAX_TITLE_LENGTH)
                 .input(folder.getTitle(), folder.getTitle(), (dialog, input) -> {
-
-                    Folder updated = new Folder();
-                    updated.setId(folder.getId());
-                    updated.setRegistered(folder.getRegistered());
-                    updated.setTitle(input.toString());
-                    updated.setLocked(folder.isLocked());
-                    updated.setPassword(folder.getPassword());
-
-                    foldersViewModel.update(updated);
+                    String newTitle = input.toString().trim();
+                    folderRepository.renameFolder(folder, newTitle);
                 }).build();
 
         configAnimation(materialDialog);
@@ -162,14 +141,10 @@ public class FolderController {
                 .content(R.string.question_delete_folder_with_notes)
                 .positiveText(R.string.confirm)
                 .negativeText(R.string.cancel)
-                .onPositive((dialog, which) -> foldersViewModel.delete(folder)).build();
+                .onPositive((dialog, which) -> folderRepository.delete(folder)).build();
 
         configAnimation(materialDialog);
         materialDialog.show();
-    }
-
-    public interface PasswordCallback {
-        void onSuccess(Folder folder);
     }
 
     private void configAnimation(MaterialDialog materialDialog) {
@@ -179,5 +154,13 @@ public class FolderController {
                 window.getAttributes().windowAnimations = R.style.DialogAnimation;
             }
         }
+    }
+
+    public LiveData<List<Folder>> getAllFolders() {
+        return folderRepository.getAll();
+    }
+
+    public interface PasswordCallback {
+        void onSuccess(Folder folder);
     }
 }

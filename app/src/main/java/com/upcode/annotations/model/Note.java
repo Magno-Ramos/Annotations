@@ -1,12 +1,17 @@
 package com.upcode.annotations.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.upcode.annotations.util.Html;
+
+import java.text.MessageFormat;
+
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
-
-import android.os.Parcel;
-import android.os.Parcelable;
 
 @Entity(tableName = "note_table")
 @TypeConverters(TagTypeConverter.class)
@@ -33,6 +38,8 @@ public class Note implements Parcelable {
     @ColumnInfo(name = "folder_id")
     private long folderId;
 
+    private long alarm;
+
     public Note() {
         this.id = 0;
         this.message = "";
@@ -41,6 +48,7 @@ public class Note implements Parcelable {
         this.registered = System.currentTimeMillis();
         this.lastModification = registered;
         this.folderId = 0;
+        this.alarm = -1;
     }
 
     protected Note(Parcel in) {
@@ -50,6 +58,7 @@ public class Note implements Parcelable {
         lastModification = in.readLong();
         message = in.readString();
         folderId = in.readLong();
+        alarm = in.readLong();
         tag = TagType.findTag(in.readInt());
     }
 
@@ -121,15 +130,36 @@ public class Note implements Parcelable {
         this.folderId = folderId;
     }
 
+    public long getAlarm() {
+        return alarm;
+    }
+
+    public void setAlarm(long alarm) {
+        this.alarm = alarm;
+    }
+
+    public boolean alarmIsEnabled() {
+        return this.alarm > 0;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        String message = Html.stripHtml(this.message);
+        return MessageFormat.format("id: {0}, folderId: {1}, title: {2}, message: {3}, alarm: {4}, registered: {5}, lastModification: {6}",
+                id, folderId, title, message, alarm, registered, lastModification);
+    }
+
     public Note doClone() {
         Note c = new Note();
-        c.setId(getId());
-        c.setTitle(getTitle());
-        c.setFolderId(getFolderId());
-        c.setMessage(getMessage());
-        c.setLastModification(getLastModification());
-        c.setTag(getTag());
-        c.setRegistered(getRegistered());
+        c.setId(id);
+        c.setTitle(title);
+        c.setFolderId(folderId);
+        c.setMessage(message);
+        c.setLastModification(lastModification);
+        c.setTag(tag);
+        c.setRegistered(registered);
+        c.setAlarm(alarm);
         return c;
     }
 
@@ -147,5 +177,6 @@ public class Note implements Parcelable {
         dest.writeString(message);
         dest.writeLong(folderId);
         dest.writeInt(tag.getTag());
+        dest.writeLong(alarm);
     }
 }

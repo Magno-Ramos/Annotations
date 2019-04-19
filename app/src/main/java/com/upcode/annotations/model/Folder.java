@@ -4,17 +4,12 @@ import android.os.Handler;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
-import androidx.room.TypeConverters;
 
 @Entity(tableName = "folder_table")
-@TypeConverters(NoteTypeConverter.class)
 public class Folder implements Parcelable {
 
     public static final int MIN_PASSWORD = 2;
@@ -31,9 +26,6 @@ public class Folder implements Parcelable {
 
     private boolean isLocked;
 
-    @Ignore
-    private List<Note> notes;
-
     private String password;
 
     private long registered;
@@ -47,7 +39,6 @@ public class Folder implements Parcelable {
         this.isLocked = false;
         this.password = "";
         this.registered = System.currentTimeMillis();
-        this.notes = new ArrayList<>();
         this.temporarilyUnlocked = false;
     }
 
@@ -57,7 +48,6 @@ public class Folder implements Parcelable {
         isLocked = in.readByte() != 0;
         password = in.readString();
         registered = in.readLong();
-        notes = in.createTypedArrayList(Note.CREATOR);
         temporarilyUnlocked = in.readByte() != 0;
     }
 
@@ -72,14 +62,6 @@ public class Folder implements Parcelable {
             return new Folder[size];
         }
     };
-
-    public List<Note> getNotes() {
-        return notes;
-    }
-
-    public void setNotes(List<Note> notes) {
-        this.notes = notes;
-    }
 
     public int getId() {
         return id;
@@ -133,6 +115,17 @@ public class Folder implements Parcelable {
         handler.postDelayed(() -> setTemporarilyUnlocked(false), 2 * 60 * 1000);
     }
 
+    public Folder doClone() {
+        Folder folder = new Folder();
+        folder.setId(id);
+        folder.setRegistered(registered);
+        folder.setTitle(title);
+        folder.setLocked(isLocked);
+        folder.setPassword(password);
+        folder.setTemporarilyUnlocked(temporarilyUnlocked);
+        return folder;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -145,7 +138,6 @@ public class Folder implements Parcelable {
         dest.writeByte((byte) (isLocked ? 1 : 0));
         dest.writeString(password);
         dest.writeLong(registered);
-        dest.writeTypedList(notes);
         dest.writeByte((byte) (temporarilyUnlocked ? 1 : 0));
     }
 }

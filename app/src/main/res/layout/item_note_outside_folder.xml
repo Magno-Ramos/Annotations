@@ -19,7 +19,7 @@
         android:background="@drawable/bg_round_note"
         android:contentDescription="@string/app_name"
         android:padding="8dp"
-        app:srcCompat="@drawable/ic_file_white" />
+        android:src="@drawable/ic_file_primary" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -37,14 +37,16 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:layout_marginEnd="4dp"
+                android:layout_marginEnd="8dp"
                 android:drawablePadding="8dp"
+                android:ellipsize="end"
                 android:gravity="start|center_vertical"
+                android:maxLines="1"
                 android:paddingTop="4dp"
                 android:textColor="?textPrimaryColor"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toTopOf="@+id/tv_history"
-                app:layout_constraintEnd_toStartOf="@+id/bt_option"
+                app:layout_constraintEnd_toStartOf="@+id/bt_notification"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -67,26 +69,42 @@
                 android:textColor="?textSecondaryColor"
                 android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/bt_option"
+                app:layout_constraintEnd_toStartOf="@+id/bt_notification"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 tools:text="3 dias atrás" />
 
-            <ImageView
+            <ImageButton
+                android:id="@+id/bt_notification"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="?selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:contentDescription="@string/app_name"
+                android:focusable="true"
+                tools:src="@drawable/ic_alarm_off"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/bt_option"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
                 android:id="@+id/bt_option"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:layout_gravity="center_vertical|end"
-                android:layout_marginEnd="4dp"
+                android:layout_marginEnd="8dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:contentDescription="@string/app_name"
                 android:focusable="true"
                 android:scaleType="centerInside"
+                android:src="@drawable/ic_more_vertical_gray_18dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_more_vertical_gray_18dp" />
+                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

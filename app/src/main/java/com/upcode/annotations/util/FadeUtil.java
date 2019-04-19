@@ -8,6 +8,10 @@ public class FadeUtil {
 
     public static void show(View view, long duration) {
         if (view != null) {
+            if (view.getVisibility() == View.VISIBLE){
+                return;
+            }
+
             view.animate()
                     .alpha(1)
                     .alphaBy(0)
@@ -25,6 +29,10 @@ public class FadeUtil {
 
     public static void hide(View view, long duration) {
         if (view != null) {
+            if (view.getVisibility() == View.GONE){
+                return;
+            }
+
             view.animate()
                     .alpha(0)
                     .alphaBy(1)

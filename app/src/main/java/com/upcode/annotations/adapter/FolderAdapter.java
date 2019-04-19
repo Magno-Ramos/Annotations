@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class FolderAdapter extends ListAdapter<Folder, FolderAdapter.FolderViewHolder> {
+public class FolderAdapter extends ListAdapter<Folder, FolderAdapter.ViewHolder> {
 
     private Context context;
     private FolderListener folderListener;
@@ -26,78 +26,63 @@ public class FolderAdapter extends ListAdapter<Folder, FolderAdapter.FolderViewH
         this.folderListener = folderListener;
     }
 
-    private static final DiffUtil.ItemCallback<Folder> DIFF_CALLBACK = new DiffUtil.ItemCallback<Folder>() {
+    private static DiffUtil.ItemCallback<Folder> DIFF_CALLBACK = new DiffUtil.ItemCallback<Folder>() {
         @Override
         public boolean areItemsTheSame(@NonNull Folder oldItem, @NonNull Folder newItem) {
-            return oldItem.getId() == newItem.getId();
+            return (oldItem.getId() == newItem.getId());
         }
 
         @Override
         public boolean areContentsTheSame(@NonNull Folder oldItem, @NonNull Folder newItem) {
-            return oldItem.getTitle().trim().equals(newItem.getTitle().trim()) && oldItem.getPassword().equals(newItem.getPassword());
+            return (oldItem.getTitle().equals(newItem.getTitle())) &&
+                    (oldItem.getPassword().equals(newItem.getPassword())) &&
+                    (oldItem.isLocked() == newItem.isLocked()) &&
+                    (oldItem.isTemporarilyUnlocked() == newItem.isTemporarilyUnlocked()) &&
+                    (oldItem.getRegistered() == newItem.getRegistered());
         }
     };
 
     @NonNull
     @Override
-    public FolderViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_folder_m, parent, false);
-        return new FolderViewHolder(view);
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context).inflate(R.layout.item_folder, parent, false);
+        return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull FolderViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Folder folder = getItem(position);
-        holder.item.setOnClickListener(v -> {
+        holder.textView.setText(folder.getTitle());
+        holder.ivLock.setVisibility(folder.isLocked() ? View.VISIBLE : View.GONE);
+        holder.itemView.setOnClickListener((v -> {
             if (folderListener != null) {
-                folderListener.onClickFolder(folder, holder.itemView);
+                folderListener.onClickFolder(folder, v);
             }
-        });
-
-        holder.item.setOnLongClickListener(v -> {
-            if (folderListener != null){
+        }));
+        holder.itemView.setOnLongClickListener(v -> {
+            if (folderListener != null) {
                 folderListener.onLongClickFolder(folder, v);
             }
             return true;
         });
-
-        holder.viewOption.setOnClickListener(v -> {
+        holder.btOption.setOnClickListener(v -> {
             if (folderListener != null) {
-                folderListener.onClickOption(folder, holder.viewOption);
+                folderListener.onClickOption(folder, v);
             }
         });
-
-        // title
-        holder.textView.setText(folder.getTitle());
-
-        // image
-        holder.imageView.setImageResource(folder.isLocked() ? R.drawable.ic_folder_88_pass : R.drawable.ic_folder_88);
-
-        // lock
-        setImageViewLock(holder.imageViewLock, folder.isLocked());
     }
 
-    private void setImageViewLock(ImageView imageView, boolean locked) {
-        imageView.setImageResource(locked ? R.drawable.ic_lock_green : R.drawable.ic_lock_open);
-    }
+    class ViewHolder extends RecyclerView.ViewHolder {
 
-    class FolderViewHolder extends RecyclerView.ViewHolder {
-
-        View item;
-        ImageView imageView;
-        View viewTag;
-        ImageView imageViewLock;
-        ImageView viewOption;
         TextView textView;
+        ImageView ivLock;
+        View btOption;
 
-        FolderViewHolder(@NonNull View itemView) {
+        ViewHolder(@NonNull View itemView) {
             super(itemView);
-            textView = itemView.findViewById(R.id.textView);
-            imageView = itemView.findViewById(R.id.imageView);
-            imageViewLock = itemView.findViewById(R.id.image_view_lock);
-            viewTag = itemView.findViewById(R.id.viewTag);
-            viewOption = itemView.findViewById(R.id.bt_option);
-            item = itemView.findViewById(R.id.itemView);
+            this.textView = itemView.findViewById(R.id.textView);
+            this.btOption = itemView.findViewById(R.id.bt_option);
+            this.ivLock = itemView.findViewById(R.id.iv_lock);
         }
     }
 }

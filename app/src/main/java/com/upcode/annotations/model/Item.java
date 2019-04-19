@@ -1,9 +1,10 @@
 package com.upcode.annotations.model;
 
-import androidx.room.ColumnInfo;
-import androidx.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import androidx.room.ColumnInfo;
+import androidx.room.PrimaryKey;
 
 public class Item implements Parcelable {
 
@@ -21,21 +22,25 @@ public class Item implements Parcelable {
 
     private long registered;
 
+    private long alarm;
+
     Item() {
         this.title = "";
         this.isLocked = false;
         this.password = "";
         this.tag = TagType.NONE;
         this.registered = System.currentTimeMillis();
+        this.alarm = -1;
     }
 
-    Item(Parcel in) {
+    private Item(Parcel in) {
         id = in.readInt();
         title = in.readString();
         isLocked = in.readByte() != 0;
         password = in.readString();
         registered = in.readLong();
         tag = TagType.findTag(in.readInt());
+        alarm = in.readLong();
     }
 
     public static final Creator<Item> CREATOR = new Creator<Item>() {
@@ -98,6 +103,14 @@ public class Item implements Parcelable {
         this.tag = tag;
     }
 
+    public long getAlarm() {
+        return alarm;
+    }
+
+    public void setAlarm(long alarm) {
+        this.alarm = alarm;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -111,5 +124,6 @@ public class Item implements Parcelable {
         dest.writeString(password);
         dest.writeLong(registered);
         dest.writeInt(tag.getTag());
+        dest.writeLong(alarm);
     }
 }
